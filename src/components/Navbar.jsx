@@ -8,7 +8,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 max-w-6xl mx-auto my-4 px-4 w-full">
+    <nav className="sticky top-0 z-50 max-w-7xl mx-auto my-4 px-4 w-full">
       {/* Outer Floating Box */}
       <div className="bg-[#121212] border border-neutral-800 rounded-2xl shadow-xl backdrop-blur-md transition-all duration-300">
         {/* Header Main Bar */}
@@ -49,7 +49,7 @@ export default function Navbar() {
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
                 <Image
-                  src="/hireloop-logo.png"
+                  src="/images/logo.png"
                   alt="Hireloop Logo"
                   width={125}
                   height={30}

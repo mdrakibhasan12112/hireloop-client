@@ -15,7 +15,7 @@ export default function Footer() {
           <div className="md:col-span-5 flex flex-col gap-4">
             <Link href="/" className="flex items-center">
               <Image
-                src="/hireloop-logo.png"
+                src="/images/logo.png"
                 alt="Hireloop Logo"
                 width={125}
                 height={30}

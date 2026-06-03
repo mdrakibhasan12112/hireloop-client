@@ -1,9 +1,12 @@
+import HeroBanner from "@/components/HeroBanner";
+import StatsSection from "@/components/StatsSection";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <div>
- <h1 className="text-3xl items-center">Hello</h1>
+      <HeroBanner></HeroBanner>
+      <StatsSection></StatsSection>
     </div>
   );
 }
