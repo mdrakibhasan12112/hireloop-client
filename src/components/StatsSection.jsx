@@ -8,7 +8,7 @@ export default function StatsSection() {
   return (
     <section className="relative w-full bg-black text-white py-24 px-4 overflow-hidden min-h-[85vh] flex flex-col items-center justify-end">
       {/* 1. GLOBE BACKGROUND IMAGE */}
-      <div className="absolute inset-0 w-full h-full flex justify-center items-start pointer-events-none z-0 select-none">
+      <div className="absolute inset-0 w-cover h-full flex justify-center items-start pointer-events-none z-0 select-none">
         <Image
           src="/images/globe.png" // Ensure your image name matches what is in your public/ folder
       alt="Globe Network Background"
