@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link, Button } from '@heroui/react';
+import { Description, Label, Radio, RadioGroup } from '@heroui/react';
 import { authClient } from '@/lib/auth-client'; // ক্লায়েন্ট ইমপোর্ট করা হলো
 import {
   Eye,
@@ -25,6 +26,7 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [role,setRole] = useState("seeker")
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -60,6 +62,7 @@ export default function SignUpPage() {
         email: formData.email,
         password: formData.password,
         name: formData.name,
+        role
       });
 
       if (authError) {
@@ -92,7 +95,6 @@ export default function SignUpPage() {
 
       <div className="relative z-10 w-full max-w-md mt-8">
         {/* পেছনে যাওয়ার লিঙ্ক */}
-   
 
         {/* ফর্ম কার্ড */}
         <div className="bg-[#0c0c0e]/90 border border-neutral-800 rounded-2xl p-8 shadow-2xl shadow-black/80 backdrop-blur-xl">
@@ -201,6 +203,36 @@ export default function SignUpPage() {
                   )}
                 </button>
               </div>
+            </div>
+
+            {/* Role selection */}
+            <div className="flex flex-col gap-4">
+              <Label>Subscription plan</Label>
+              <RadioGroup
+                defaultValue="seeker"
+                name="role"
+                orientation="horizontal"
+                onChange={value => setRole(value)}
+              >
+                <Radio value="seeker">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>Job Seeker</Label>
+                 
+                  </Radio.Content>
+                </Radio>
+                <Radio value="recruiter">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>Recruiter</Label>
+                  </Radio.Content>
+                </Radio>
+               
+              </RadioGroup>
             </div>
 
             {/* সাবমিট বাটন */}

@@ -2,10 +2,25 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Link, Button } from '@heroui/react';
+import { useSession, authClient } from '@/lib/auth-client';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, isPending } = useSession();
+  const router = useRouter();
+
+  console.log(session,isPending);
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+         window.location.href = '/signin';
+        },
+      },
+    });
+  };
 
   return (
     <nav className="sticky top-0 z-50 max-w-7xl mx-auto my-4 px-4 w-full">
@@ -54,15 +69,16 @@ export default function Navbar() {
                   width={125}
                   height={30}
                   priority
+                  style={{ width: '125px', height: 'auto' }}
                   className="object-contain"
                 />
               </Link>
             </div>
           </div>
 
-          {/* RIGHT SIDE: Menu Links + Divider + Actions */}
+          {/* RIGHT SIDE: Menu Links + Actions */}
           <div className="flex items-center gap-8">
-            {/* Desktop Navigation Links (Pushed Right) */}
+            {/* Desktop Navigation Links */}
             <ul className="hidden items-center gap-8 md:flex">
               <li>
                 <Link
@@ -90,30 +106,50 @@ export default function Navbar() {
               </li>
             </ul>
 
-            {/* True Vertical Divider Line (Desktop only - Before Sign In) */}
+            {/* True Vertical Divider Line (Desktop only) */}
             <div className="hidden md:block h-5 w-[1px] bg-neutral-800" />
 
             {/* Auth Actions Group */}
             <div className="flex items-center gap-5">
-              <div>
-                <Link
-                  href="signin"
-                  className="text-[#6366f1] hover:text-[#4f46e5] text-sm font-semibold transition-colors"
-                >
-                  Sign In
-                </Link>
-              </div>
-
-              <div>
-                <Button
-                  as={Link}
-                  href="#"
-                  className="bg-[#5850ec] hover:bg-[#453e98] text-white font-medium px-5 py-2 rounded-xl transition-all shadow-lg shadow-indigo-500/10"
-                  variant="solid"
-                >
-                  Get Started
-                </Button>
-              </div>
+              {isPending ? (
+                <span className="text-xs text-neutral-500 animate-pulse">
+                  Loading...
+                </span>
+              ) : session ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-neutral-300 font-medium">
+                    Hi, {session.user?.name}
+                  </span>
+                  <Button
+                    onClick={handleSignOut}
+                    size="sm"
+                    className="bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl text-xs"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <Link
+                      href="/signin"
+                      className="text-[#6366f1] hover:text-[#4f46e5] text-sm font-semibold transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                  </div>
+                  <div>
+                    <Button
+                      as={Link}
+                      href="/signup"
+                      className="bg-[#5850ec] hover:bg-[#453e98] text-white font-medium px-5 py-2 rounded-xl transition-all shadow-lg shadow-indigo-500/10"
+                      variant="solid"
+                    >
+                      Get Started
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </header>
