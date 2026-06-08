@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -11,8 +12,11 @@ import {
   TextField,
   Switch,
   Button,
+  toast, // নিশ্চিত করুন আপনার গ্লোবাল Layout-এ <ToastProvider /> অ্যাড করা আছে
 } from '@heroui/react';
 import { ChevronDown, Briefcase, FileText } from '@gravity-ui/icons';
+import { createJob } from '@/lib/actions/jobs';
+import { redirect } from 'next/navigation';
 
 const INITIAL_FORM_STATE = {
   title: '',
@@ -57,7 +61,6 @@ export default function PostJobPage() {
     }
   };
 
-  // FIXED: Switch toggle handler - এটি এখন নিখুঁতভাবে true/false টগল করবে
   const handleSwitchChange = isSelected => {
     setFormData(prev => ({
       ...prev,
@@ -71,6 +74,7 @@ export default function PostJobPage() {
     setErrorMsg('');
     setSuccessMsg('');
 
+    // প্ল্যান ভ্যালিডেশন
     if (companyData.activeJobsCount >= companyData.jobLimit) {
       setErrorMsg(
         `Upgrade required. You have reached the maximum active job limit (${companyData.jobLimit}) for the ${companyData.plan} plan.`,
@@ -86,20 +90,35 @@ export default function PostJobPage() {
     }
 
     setIsSubmitting(true);
+
     try {
-      console.log('Submitting Payload:', {
+      // ডেটা পে-লোড গোছানো
+      const payload = {
         ...formData,
         companyId: companyData.id,
         status: 'active',
-      });
+      };
 
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      setSuccessMsg('Job posted successfully! Resetting form...');
+      console.log('Submitting Payload:', payload);
 
-      setTimeout(() => {
-        setFormData(INITIAL_FORM_STATE);
-        setSuccessMsg('');
-      }, 2000);
+      // FIXED: createJob অ্যাকশনে আসল ডেটা (payload) পাঠানো হলো
+      const res = await createJob(payload);
+
+      if (res && res.insertedId) {
+        // টোস্ট নোটিফিকেশন দেখানো
+        toast.success('Job posted successfully!');
+        setSuccessMsg('Job posted successfully! Resetting form...');
+        
+
+        // ফিনিশিং টাচ: স্টেট একদম খালি বা ডিফল্ট করে দেওয়া (অটোমেটিক রিফ্রেশ)
+        setTimeout(() => {
+          setFormData(INITIAL_FORM_STATE);
+          setSuccessMsg('');
+          redirect('/dashboard/recruiter');
+        }, 1500);
+      } else {
+        setErrorMsg(res?.message || 'Failed to create job post.');
+      }
     } catch (err) {
       setErrorMsg('An unexpected error occurred.');
     } finally {
@@ -268,7 +287,6 @@ export default function PostJobPage() {
                     Fully Remote Position
                   </span>
 
-                  {/* FIXED v3 SWITCH COMPOSITION: data-attributes দিয়ে নিখুঁতভাবে টগল হ্যান্ডলিং করা হয়েছে */}
                   <Switch
                     isSelected={formData.isRemote}
                     onChange={() => handleSwitchChange(!formData.isRemote)}
@@ -484,7 +502,7 @@ export default function PostJobPage() {
                 isPlanExceeded ? 'opacity-45 cursor-not-allowed' : ''
               }`}
             >
-              Publish Active Job
+              Publish Job
             </Button>
           </div>
         </Form>
